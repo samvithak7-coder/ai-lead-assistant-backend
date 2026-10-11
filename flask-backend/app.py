@@ -3,7 +3,6 @@ import time
 from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 from google import genai
-# pyrefly: ignore [missing-import]
 from google.genai import types
 
 app = Flask(__name__)
@@ -174,7 +173,7 @@ DEMO_PAGE = r"""<!DOCTYPE html>
 <script>
   var msgs = document.getElementById('msgs'), input = document.getElementById('in'),
       send = document.getElementById('send'), chips = document.getElementById('chips');
-  var history = [], busy = false;
+  var chatHistory = [], busy = false;
 
   function add(text, who) {
     var d = document.createElement('div');
@@ -191,14 +190,14 @@ DEMO_PAGE = r"""<!DOCTYPE html>
     var wait = add('...', 'bot');
     fetch('/api/chat', {
       method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ message: text, history: history.slice(-10) })
+      body: JSON.stringify({ message: text, history: chatHistory.slice(-10) })
     })
     .then(function (r) { return r.json(); })
     .then(function (d) {
       var reply = d.reply || d.error || 'Something went wrong.';
       wait.textContent = reply;
-      history.push({role: 'user', content: text});
-      history.push({role: 'assistant', content: reply});
+      chatHistory.push({role: 'user', content: text});
+      chatHistory.push({role: 'assistant', content: reply});
     })
     .catch(function () { wait.textContent = 'Could not reach the server. Please try again.'; })
     .then(function () { busy = false; send.disabled = false; input.focus(); msgs.scrollTop = msgs.scrollHeight; });
